@@ -16,9 +16,9 @@ describe("/api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(4);
+        expect(body.length > 0).toBe(true);
         body.forEach((category) => {
-          expect(category).toEqual({
+          expect.objectContaining({
             slug: expect.any(String),
             description: expect.any(String),
           });
@@ -26,18 +26,20 @@ describe("/api/categories", () => {
       });
   });
 
-  test("GET - 404: responds with an error message, (Not found!), when passed an invalid endpoint", () => {
-    return request(app)
-      .get("/nonsense")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Not found!");
-      });
+  describe("/api/nonsense - invalid endpoint", () => {
+    test("GET - 404: responds with an error message, (Not found!), when passed an invalid endpoint", () => {
+      return request(app)
+        .get("/nonsense")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found!");
+        });
+    });
   });
 });
 
 describe.only("/api/reviews", () => {
-  test("GET - 200: responds with an array of review objects with 9 properties", () => {
+  test.only("GET - 200: responds with an array of review objects with 9 properties", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -56,6 +58,14 @@ describe.only("/api/reviews", () => {
             comment_count: expect.any(Number),
           });
         });
+      });
+  });
+  test("GET - 200: Responds with an array of review objects defaulting to sort by date DESC", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", {descending: true});
       });
   });
 });

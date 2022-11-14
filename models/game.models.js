@@ -14,14 +14,15 @@ exports.selectCategories = () => {
 };
 
 exports.selectReviews = () => {
-    return db
-      .query(
-        `
-          SELECT * FROM reviews;
-          
+  return db
+    .query(
+      `
+        ALTER TABLE reviews
+        ADD COLUMN comment_count INT NOT NULL;
+
           `
-      )
-      .then((result) => {
-        console.log(result.rows)
-      });
-  };
+    )
+    .then((result) => {
+      console.log(result.rows);
+    });
+};
