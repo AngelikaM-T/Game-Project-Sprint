@@ -8,6 +8,6 @@ exports.getCategories = (req, res, next) => {
 
 exports.getReviews = (req, res, next) => {
     selectReviews().then((reviews) => {
-      //res.send(reviews);
+      res.send(reviews);
     });
   };

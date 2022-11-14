@@ -39,12 +39,13 @@ describe("/api/categories", () => {
 });
 
 describe.only("/api/reviews", () => {
-  test.only("GET - 200: responds with an array of review objects with 9 properties", () => {
+  test("GET - 200: responds with an array of review objects with 9 properties, sorted by date DESC", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: true });
+        expect(body.length).toBe(2);
         body.forEach((review) => {
           expect(review).toEqual({
             owner: expect.any(String),
@@ -55,17 +56,9 @@ describe.only("/api/reviews", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             designer: expect.any(String),
-            comment_count: expect.any(Number),
+            comment_count: expect.any(String),
           });
         });
-      });
-  });
-  test("GET - 200: Responds with an array of review objects defaulting to sort by date DESC", () => {
-    return request(app)
-      .get("/api/reviews")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body).toBeSortedBy("created_at", {descending: true});
       });
   });
 });
