@@ -10,22 +10,24 @@ afterAll(() => {
   db.end();
 });
 
-describe.only("/api/categories", () => {
+describe("/api/categories", () => {
   test("GET - 200: responds with an array of category objects with slug and description as properties", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(4);
+        expect(body.length > 0).toBe(true);
         body.forEach((category) => {
-          expect(category).toEqual({
+          expect.objectContaining({
             slug: expect.any(String),
             description: expect.any(String),
           });
         });
       });
   });
+});
 
+describe("/api/nonsense - invalid endpoint", () => {
   test("GET - 404: responds with an error message, (Not found!), when passed an invalid endpoint", () => {
     return request(app)
       .get("/nonsense")
