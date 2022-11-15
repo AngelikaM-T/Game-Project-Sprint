@@ -2,6 +2,7 @@ const {
   selectCategories,
   selectReviews,
   fetchReviewsByReviewId,
+  fetchCommentsByReviewId,
 } = require("../models/game.models");
 
 exports.getCategories = (req, res, next) => {
@@ -20,7 +21,17 @@ exports.getReviewsByReviewId = (req, res, next) => {
   const { review_id } = req.params;
   fetchReviewsByReviewId(review_id)
     .then((review) => {
+      console.log(review)
       res.status(200).send({ review });
+    })
+    .catch(next);
+};
+
+exports.getCommentsByReviewId = (req, res, next) => {
+  const { review_id } = req.params;
+  fetchCommentsByReviewId(review_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
