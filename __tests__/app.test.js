@@ -103,3 +103,49 @@ describe("/api/reviews/:review_id", () => {
     });
   });
 });
+
+describe.only("GET - 200: /api/reviews/:review_id/comments", () => {
+  test("should respond with an array of comments for the given review_id", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length > 0).toBe(true);
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+        body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: 2,
+          });
+        });
+      });
+  });
+  test("GET - 200: responds with an empty array when specified review id has no comments", () => {
+    return request(app)
+      .get("/api/reviews/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+    test("GET - 404: responds with an error message, when passed an invalid review_id", () => {
+      return request(app)
+        .get("/api/reviews/999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comments with review id 999 not found!");
+        });
+    });
+    test("GET - 400: responds with an error message, when passed an invalid request", () => {
+      return request(app)
+        .get("/api/reviews/nonsense/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query!");
+        });
+    });
+  });
