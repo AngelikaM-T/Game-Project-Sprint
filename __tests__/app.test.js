@@ -63,7 +63,7 @@ describe("/api/reviews", () => {
   });
 });
 
-describe.only("/api/reviews/:review_id", () => {
+describe("/api/reviews/:review_id", () => {
   test("GET - 200: responds with a review object matching given review id", () => {
     return request(app)
       .get("/api/reviews/2")
@@ -83,12 +83,22 @@ describe.only("/api/reviews/:review_id", () => {
       });
   });
   describe("/api/reviews/999 - invalid review_id", () => {
-    test("GET - 400: responds with an error message, when passed an invalid review_id", () => {
+    test("GET - 404: responds with an error message, when passed an invalid review_id", () => {
       return request(app)
         .get("/api/reviews/999")
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Review id 999 not found!");
+        });
+    });
+  });
+  describe("/api/reviews/not-a-number Bad request", () => {
+    test("GET - 400: responds with an error message, when passed an invalid request", () => {
+      return request(app)
+        .get("/api/reviews/not-a-number")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid query!");
         });
     });
   });

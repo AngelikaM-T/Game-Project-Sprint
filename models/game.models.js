@@ -51,11 +51,10 @@ exports.fetchReviewsByReviewId = (review_id) => {
     .then((result) => {
       if (!result.rows[0]) {
         return Promise.reject({
-          status: 400,
+          status: 404,
           msg: `Review id ${review_id} not found!`,
         });
       }
       return result.rows[0];
     });
 };
-
