@@ -35,6 +35,6 @@ exports.selectReviews = () => {
           `
     )
     .then((result) => {
-      return result.rows
+      return result.rows;
     });
 };

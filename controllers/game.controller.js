@@ -7,7 +7,7 @@ exports.getCategories = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-    selectReviews().then((reviews) => {
-      res.send(reviews);
-    });
-  };
+  selectReviews().then((reviews) => {
+    res.send(reviews);
+  });
+};
