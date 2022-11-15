@@ -62,3 +62,34 @@ describe("/api/reviews", () => {
       });
   });
 });
+
+describe.only("/api/reviews/:review_id", () => {
+  test("GET - 200: responds with a review object matching given review id", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject({
+          review_id: 2,
+          title: expect.any(String),
+          review_body: expect.any(String),
+          designer: expect.any(String),
+          review_img_url: expect.any(String),
+          votes: expect.any(Number),
+          category: expect.any(String),
+          owner: expect.any(String),
+          created_at: expect.any(String),
+        });
+      });
+  });
+  describe("/api/reviews/999 - invalid review_id", () => {
+    test("GET - 400: responds with an error message, when passed an invalid review_id", () => {
+      return request(app)
+        .get("/api/reviews/999")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review id 999 not found!");
+        });
+    });
+  });
+});
