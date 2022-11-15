@@ -38,7 +38,7 @@ describe("/api/categories", () => {
   });
 });
 
-describe.only("/api/reviews", () => {
+describe("/api/reviews", () => {
   test("GET - 200: responds with an array of review objects with 9 properties, sorted by date DESC", () => {
     return request(app)
       .get("/api/reviews")
