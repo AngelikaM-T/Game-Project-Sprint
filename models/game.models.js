@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkReviewExists } = require("../db/db");
 
 exports.selectCategories = () => {
   return db
@@ -60,23 +61,22 @@ exports.fetchReviewsByReviewId = (review_id) => {
 };
 
 exports.fetchCommentsByReviewId = (review_id) => {
-  return db.query(
-    `
-    SELECT 
-    comment_id, votes, created_at, author, body, review_id
-    FROM comments
-    WHERE review_id = $1
-    ORDER BY created_at DESC
-    `,
-    [review_id]
-  )
-  .then((result) => {
-    if (result.rows.length === 0) {
-      return Promise.reject({
-        status: 404,
-        msg: `Comments with review id ${review_id} not found!`,
-      });
-    }
-    return result.rows
-  })
+  return checkReviewExists(review_id)
+    .then(() => {
+      return db.query(
+        `
+      SELECT 
+      comment_id, votes, created_at, author, body, review_id
+      FROM comments
+      WHERE review_id = $1
+      ORDER BY created_at DESC
+      `,
+        [review_id]
+      );
+    })
+
+    .then((result) => {
+      return result.rows;
+    });
 };
+
