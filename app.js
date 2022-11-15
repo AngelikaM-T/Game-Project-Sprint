@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
-const { getCategories } = require("./controllers/game.controller");
+const { getCategories, getReviews } = require("./controllers/game.controller");
 
 app.get("/api/categories", getCategories);
+
+app.get("/api/reviews", getReviews);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not found!" });
