@@ -80,3 +80,27 @@ exports.fetchCommentsByReviewId = (review_id) => {
     });
 };
 
+exports.insertCommentByReviewId = (review_id, username, body) => {
+  if(!body || !username){
+    return Promise.reject({
+      status: 400,
+      msg: "invalid comment",
+    });
+  }
+  return checkReviewExists(review_id)
+    .then(() => {
+      return db.query(
+        `
+        INSERT INTO comments
+        (body, review_id, author)
+        VALUES
+        ($1, $2, $3)
+        RETURNING *
+      `,
+        [body, review_id, username]
+      );
+    })
+    .then((result) => {
+      return result.rows[0];
+    });
+};

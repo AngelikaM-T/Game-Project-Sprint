@@ -132,20 +132,88 @@ describe("GET - 200: /api/reviews/:review_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-    test("GET - 404: responds with an error message, when passed an invalid review_id", () => {
-      return request(app)
-        .get("/api/reviews/999/comments")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Comments with review id 999 not found!");
-        });
-    });
-    test("GET - 400: responds with an error message, when passed an invalid request", () => {
-      return request(app)
-        .get("/api/reviews/nonsense/comments")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("invalid query!");
-        });
-    });
+  test("GET - 404: responds with an error message, when passed an invalid review_id", () => {
+    return request(app)
+      .get("/api/reviews/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comments with review id 999 not found!");
+      });
   });
+  test("GET - 400: responds with an error message, when passed an invalid request", () => {
+    return request(app)
+      .get("/api/reviews/nonsense/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query!");
+      });
+  });
+});
+
+describe.only("/api/reviews/:review_id/comments", () => {
+  test("POST - 201: responds with the posted comment", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        body: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 7,
+          body: "I love the game but there should be a few bug fixes!",
+          review_id: 1,
+          author: "mallionaire",
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("GET - 404: responds with an error message, when passed an invalid review_id", () => {
+    return request(app)
+      .post("/api/reviews/999/comments")
+      .send({
+        username: "mallionaire",
+        body: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comments with review id 999 not found!");
+      });
+  });
+  test("GET - 400: responds with an error message, when passed an invalid request", () => {
+    return request(app)
+      .post("/api/reviews/nonsense/comments")
+      .send({
+        username: "mallionaire",
+        body: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query!");
+      });
+  });
+  test("GET 400: responds with invalid comment msg if passed a comment without a body", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid comment");
+      });
+  });
+  test("GET 400: responds with invalid comment msg if passed a comment without the username", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        body: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid comment");
+      });
+  });
+});
