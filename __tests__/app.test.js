@@ -202,7 +202,7 @@ describe.only("/api/reviews/:review_id/comments", () => {
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid comment");
+        expect(body.msg).toBe("invalid request");
       });
   });
   test("GET 400: responds with invalid comment msg if passed a comment without the username", () => {
@@ -213,7 +213,56 @@ describe.only("/api/reviews/:review_id/comments", () => {
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid comment");
+        expect(body.msg).toBe("invalid request");
+      });
+  });
+  test("GET - 404: responds with an error message when passed an invalid username", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "Angel999",
+        body: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Angel999 not found!");
+      });
+  });
+  test("GET 400: responds with invalid request msg if username key spelt incorrectly", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        userne: "mallionaire",
+        body: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid request");
+      });
+  });
+  test("GET 400: responds with invalid request msg if body spelt incorrectly", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        by: "I love the game but there should be a few bug fixes!",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid request");
+      });
+  });
+  test("GET 400: responds with error message for wrong data type", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        body: 9999999,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("body data type incorrect - needs to be a string");
       });
   });
 });
+

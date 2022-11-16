@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { checkReviewExists } = require("../db/db");
+const { checkReviewExists, checkUsernameExists } = require("../db/db");
 
 exports.selectCategories = () => {
   return db
@@ -81,14 +81,24 @@ exports.fetchCommentsByReviewId = (review_id) => {
 };
 
 exports.insertCommentByReviewId = (review_id, username, body) => {
-  if(!body || !username){
+  if (!body || !username) {
     return Promise.reject({
       status: 400,
-      msg: "invalid comment",
+      msg: "invalid request",
+    });
+  }
+  if (typeof body !== "string"){
+    return Promise.reject({
+      status: 400,
+      msg: "body data type incorrect - needs to be a string",
     });
   }
   return checkReviewExists(review_id)
     .then(() => {
+      return checkUsernameExists(username);
+    })
+    .then(() => {
+      console.log("in the model");
       return db.query(
         `
         INSERT INTO comments

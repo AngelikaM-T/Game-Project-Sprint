@@ -19,9 +19,10 @@ app.post("/api/reviews/:review_id/comments", postReviewsByReviewId);
 
 //custom errors
 app.use((err, req, res, next) => {
+  console.log(err)
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
-  } else if (err.code === "22P02") {
+  } else if (err.code === "22P02" || err.code === "23503") {
     res.status(400).send({ msg: "invalid query!" });
   }
   next(err);
