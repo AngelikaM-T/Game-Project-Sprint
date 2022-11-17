@@ -266,3 +266,91 @@ describe("/api/reviews/:review_id/comments", () => {
   });
 });
 
+describe.only("PATCH - /api/reviews/:review_id", () => {
+  test("PATCH - 200: increment reviews vote by specified amount and responds with the updated review", () => {
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({
+        inc_votes: 100,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect.objectContaining({
+          review_id: 4,
+          title: expect.any(String),
+          designer: expect.any(String),
+          owner: expect.any(String),
+          review_img_url: expect.any(String),
+          review_body: expect.any(String),
+          category: expect.any(String),
+          created_at: expect.any(String),
+          votes: 107,
+        });
+      });
+  });
+  test("PATCH - 200: decrement reviews vote by specified amount and responds with the updated review", () => {
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({
+        inc_votes: -100,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect.objectContaining({
+          review_id: 4,
+          title: expect.any(String),
+          designer: expect.any(String),
+          owner: expect.any(String),
+          review_img_url: expect.any(String),
+          review_body: expect.any(String),
+          category: expect.any(String),
+          created_at: expect.any(String),
+          votes: -93,
+        });
+      });
+  });
+  test("GET - 404: responds with an error message, when passed an invalid review_id", () => {
+    return request(app)
+      .patch("/api/reviews/999")
+      .send({
+        inc_votes: -100,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comments with review id 999 not found!");
+      });
+  });
+  test("GET - 400: responds with an error message, when passed an invalid review id", () => {
+    return request(app)
+    .patch("/api/reviews/nonsense")
+    .send({
+      inc_votes: -100,
+    })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query!");
+      });
+  });
+  test("GET 400: responds with update failed message if passed an invalid increment", () => {
+    return request(app)
+    .patch("/api/reviews/4")
+    .send({
+      inc_votes: "one hundred",
+    })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("update failed, increment data type incorrect");
+      });
+  });
+  test("GET 400: responds with invalid request msg if inc_votes spelt incorrectly", () => {
+    return request(app)
+    .patch("/api/reviews/4")
+    .send({
+      inckkk_votez: 100,
+    })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid request");
+      });
+  });
+});
