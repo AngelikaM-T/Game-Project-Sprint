@@ -6,6 +6,7 @@ const {
   insertCommentByReviewId,
   updateReview,
   selectUsers,
+  selectReviewWithCommentCount,
 } = require("../models/game.models");
 
 exports.getCategories = (req, res, next) => {
@@ -65,3 +66,5 @@ exports.getUsers = (req, res, next) => {
     })
     .catch(next);
 };
+
+
