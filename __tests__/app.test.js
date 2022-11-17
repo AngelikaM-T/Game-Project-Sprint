@@ -411,5 +411,96 @@ describe("GET - 200: /api/reviews/:review_id", () => {
   });
 });
 
-
-  
+describe("GET - /api/reviews", () => {
+  test("GET - 200: responds with an array of review objects sorted by date DESC", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { descending: true });
+        expect(body.length > 0).toBe(true);
+        body.forEach((review) => {
+          expect(review).toEqual({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET - 200: Responds with an array of reviews sorted by category", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length > 0).toBe(true);
+        expect(body).toBeSorted("votes");
+        body.forEach((review) => {
+          expect(review).toEqual({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET - 200: Responds with an array of reviews sorted by category", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length > 0).toBe(true);
+        body.forEach((review) => {
+          expect(review).toEqual({
+            category: "dexterity",
+            comment_count: expect.any(String),
+            created_at: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_id: expect.any(Number),
+            review_img_url: expect.any(String),
+            title: expect.any(String),
+            votes: expect.any(Number),
+          });
+        });
+      });
+  });
+  describe("-error tests", () => {
+    test("GET - 404: responds with an error message, (Not found!), when passed an invalid endpoint", () => {
+      return request(app)
+        .get("/nonsense")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found!");
+        });
+    });
+    test("GET - 400: Responds with an invalid sort_by query if passed an invalid sort_by query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=nonsense")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid sort query");
+        });
+    });
+    test("GET - 400: Responds with an invalid order query if passed an invalid order query", () => {
+      return request(app)
+        .get("/api/reviews?order=increasing")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("invalid order query");
+        });
+    });
+  });
+});

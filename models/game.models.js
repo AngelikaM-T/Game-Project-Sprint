@@ -14,11 +14,20 @@ exports.selectCategories = () => {
     });
 };
 
-exports.selectReviews = () => {
-  return db
-    .query(
-      `
-        SELECT 
+exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
+  const validSortQueries = ["created_at", "votes", "title", "owner", "designer", "comment_count"];
+  const validOrderQueries = ["ASC", "DESC"];
+
+  if (!validSortQueries.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "invalid sort query" });
+  }
+  if (!validOrderQueries.includes(order.toUpperCase())) {
+    return Promise.reject({ status: 400, msg: "invalid order query" });
+  }
+
+  const categoryValues = [];
+  let queryStr = 
+      `SELECT 
         reviews.owner,
         reviews.title,
         reviews.review_id,
@@ -30,14 +39,20 @@ exports.selectReviews = () => {
         COUNT(comments.review_id) AS comment_count
         FROM reviews
         LEFT JOIN comments
-        ON reviews.review_id = comments.review_id
-        GROUP BY reviews.review_id
-        ORDER BY created_at DESC
-          `
-    )
-    .then((result) => {
-      return result.rows;
-    });
+        ON reviews.review_id = comments.review_id`
+
+  if (category) {
+    queryStr += ` WHERE category = $1`;
+    categoryValues.push(category);
+  }
+
+  queryStr += ` GROUP BY reviews.review_id`;
+
+  queryStr += ` ORDER BY ${sort_by} ${order}`
+
+  return db.query(queryStr, categoryValues).then((result) => {
+    return result.rows
+  });
 };
 
 exports.fetchReviewsByReviewId = (review_id) => {
@@ -162,5 +177,3 @@ exports.selectUsers = () => {
       return result.rows;
     });
 };
-
-

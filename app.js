@@ -8,7 +8,6 @@ const {
   postReviewsByReviewId,
   patchReview,
   getUsers,
-  getReviewWithCommentCount,
 } = require("./controllers/game.controller");
 
 app.use(express.json());
