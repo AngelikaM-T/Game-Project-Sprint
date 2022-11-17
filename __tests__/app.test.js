@@ -45,7 +45,7 @@ describe("GET - /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body).toBeSortedBy("created_at", { descending: true });
-        expect(body.length).toBe(2);
+        expect(body.length > 0).toBe(true);
         body.forEach((review) => {
           expect(review).toEqual({
             owner: expect.any(String),
@@ -361,13 +361,13 @@ describe("PATCH - /api/reviews/:review_id", () => {
   });
 });
 
-describe.only("GET - /api/users", () => {
+describe("GET - /api/users", () => {
   test("GET - 200: responds with an array of user objects ", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
-        expect(body.users.length > 0).toBe(true)
+        expect(body.users.length > 0).toBe(true);
         body.users.forEach((user) => {
           expect.objectContaining({
             username: expect.any(String),
@@ -388,3 +388,28 @@ describe.only("GET - /api/users", () => {
     });
   });
 });
+
+describe("GET - 200: /api/reviews/:review_id", () => {
+  test("GET - 200: responds with a review response objects including comment count", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject({
+          review_id: 2,
+          title: expect.any(String),
+          review_body: expect.any(String),
+          designer: expect.any(String),
+          review_img_url: expect.any(String),
+          votes: expect.any(Number),
+          category: expect.any(String),
+          owner: expect.any(String),
+          created_at: expect.any(String),
+          comment_count: 3,
+        });
+      });
+  });
+});
+
+
+  
