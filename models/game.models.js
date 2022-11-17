@@ -87,7 +87,7 @@ exports.insertCommentByReviewId = (review_id, username, body) => {
       msg: "invalid request",
     });
   }
-  if (typeof body !== "string"){
+  if (typeof body !== "string") {
     return Promise.reject({
       status: 400,
       msg: "body data type incorrect - needs to be a string",
@@ -108,6 +108,36 @@ exports.insertCommentByReviewId = (review_id, username, body) => {
         RETURNING *
       `,
         [body, review_id, username]
+      );
+    })
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.updateReview = (review_id, inc_votes) => {
+  if (!inc_votes) {
+    return Promise.reject({
+      status: 400,
+      msg: "invalid request",
+    });
+  }
+  if (typeof inc_votes !== "number") {
+    return Promise.reject({
+      status: 400,
+      msg: "update failed, increment data type incorrect",
+    });
+  }
+  return checkReviewExists(review_id)
+    .then(() => {
+      return db.query(
+        `
+    UPDATE reviews
+    SET votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *
+    `,
+        [review_id, inc_votes]
       );
     })
     .then((result) => {
