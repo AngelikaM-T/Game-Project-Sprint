@@ -98,7 +98,6 @@ exports.insertCommentByReviewId = (review_id, username, body) => {
       return checkUsernameExists(username);
     })
     .then(() => {
-      console.log("in the model");
       return db.query(
         `
         INSERT INTO comments
@@ -142,5 +141,18 @@ exports.updateReview = (review_id, inc_votes) => {
     })
     .then((result) => {
       return result.rows[0];
+    });
+};
+
+exports.selectUsers = () => {
+  return db
+    .query(
+      `    
+      SELECT  *
+      FROM users;
+      `
+    )
+    .then((result) => {
+      return result.rows;
     });
 };
