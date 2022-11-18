@@ -107,6 +107,7 @@ describe("GET - 200: /api/reviews/:review_id/comments", () => {
       .get("/api/reviews/2/comments")
       .expect(200)
       .then(({ body }) => {
+        console.log(body);
         expect(body.comments.length > 0).toBe(true);
         expect(body.comments).toBeSortedBy("created_at", { descending: true });
         body.comments.forEach((comment) => {
@@ -366,6 +367,7 @@ describe("GET - /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
+        console.log(body);
         expect(body.users.length > 0).toBe(true);
         body.users.forEach((user) => {
           expect.objectContaining({
@@ -563,5 +565,15 @@ describe("DELETE - 204: /api/comments/:comment_id", () => {
           expect(body.msg).toBe("Not found!");
         });
     });
+  });
+});
+describe("GET - 200: /api", () => {
+  test("should respond with endpoints.json with all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+      });
   });
 });

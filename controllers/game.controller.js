@@ -9,6 +9,8 @@ const {
   deleteComment,
 } = require("../models/game.models");
 
+const APIendPoints = require("../endpoints.json")
+
 exports.getCategories = (req, res, next) => {
   selectCategories().then((categories) => {
     res.send(categories);
@@ -79,4 +81,9 @@ exports.deleteCommentById = (req, res, next) => {
       res.sendStatus(204);
     })
     .catch(next);
+};
+
+exports.getEndPoints = (req, res, next) => {
+    res.send(APIendPoints)
+    .catch(next)
 };
