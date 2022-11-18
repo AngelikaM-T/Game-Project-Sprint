@@ -565,3 +565,132 @@ describe("DELETE - 204: /api/comments/:comment_id", () => {
     });
   });
 });
+describe("GET - 200: /api", () => {
+  test("should respond with endpoints.json with all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const JSONObject = {
+          "GET /api": {
+            "description": "serves up a json representation of all the available endpoints of the api"
+          },
+          "GET /api/categories": {
+            "description": "serves an array of all categories",
+            "queries": [],
+            "exampleResponse": {
+              "categories": [
+                {
+                  "description": "Players attempt to uncover each other's hidden role",
+                  "slug": "Social deduction"
+                }
+              ]
+            }
+          },
+          "GET /api/reviews": {
+            "description": "serves an array of all reviews",
+            "queries": ["category", "sort_by", "order"],
+            "exampleResponse": {
+              "reviews": [
+                {
+                  "title": "One Night Ultimate Werewolf",
+                  "designer": "Akihisa Okui",
+                  "owner": "happyamy2016",
+                  "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+                  "category": "hidden-roles",
+                  "created_at": 1610964101251,
+                  "votes": 5
+                }
+              ]
+            }
+          },
+          "GET /api/reviews/:review_id": {
+            "description": "serves a review object matching given review id",
+            "queries": ["review_id"],
+            "exampleResponse": {
+              "review": {
+                "review_id": 2,
+                "title": "Jenga",
+                "category": "dexterity",
+                "designer": "Leslie Scott",
+                "owner": "philippaclaire9",
+                "review_body": "Fiddly fun for all the family",
+                "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                "created_at": "2021-01-18T10:01:41.251Z",
+                "votes": 5,
+                "comment_count": 3
+              }
+            }
+          },
+          "GET /api/reviews/:review_id/comments": {
+            "description": "serves an object containing all comments for a review",
+            "queries": ["review_id"],
+            "exampleResponse": {
+              "comment_id": 5,
+              "votes": 13,
+              "created_at": "2021-01-18T10:24:05.410Z",
+              "author": "mallionaire",
+              "body": "Now this is a story all about how, board games turned my life upside down",
+              "review_id": 2
+            }
+          },
+          "POST /api/reviews/:review_id/comments": {
+            "description": "adds a new comment to a review",
+            "queries": ["review_id"],
+            "POST_body": {
+              "username": "mallionaire",
+              "body": "I love the game but there should be a few bug fixes!"
+            },
+            "exampleResponse": {
+              "comment_id": 7,
+              "body": "I love the game but there should be a few bug fixes!",
+              "review_id": 1,
+              "author": "mallionaire",
+              "votes": 0,
+              "created_at": "2022-11-18T14:28:07.874Z"
+            }
+          },
+          "PATCH /api/reviews/:review_id": {
+            "description": "updates the number of votes on a comment",
+            "queries": ["review_id"],
+            "PATCH_body": {
+              "inc_votes": 100
+            },
+            "exampleResponse": {
+              "review_id": 4,
+              "title": "Dolor reprehenderit",
+              "category": "social deduction",
+              "designer": "Gamey McGameface",
+              "owner": "mallionaire",
+              "review_body": "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
+              "review_img_url": "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+              "created_at": "2021-01-22T11:35:50.936Z",
+              "votes": 107
+            }
+          },
+          "GET /api/users": {
+            "description": "serves an array containing all users",
+            "queries": [],
+            "exampleResponse": [
+              {
+                "username": "bainesface",
+                "name": "sarah",
+                "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+              },
+              {
+                "username": "dav3rid",
+                "name": "dave",
+                "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+              }
+            ]
+          },
+          "DELETE /api/comments/:comment_id": {
+            "description": "deletes a comment from the comments table",
+            "queries": ["comment_id"]
+          }
+        }
+        expect(typeof body).toBe("object"); 
+        expect(body).toEqual(JSONObject)
+      });
+  });
+});
