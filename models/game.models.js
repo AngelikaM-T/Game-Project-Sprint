@@ -3,6 +3,7 @@ const {
   checkReviewExists,
   checkUsernameExists,
   checkCategoryExists,
+  checkCommentExists,
 } = require("../db/db");
 
 exports.selectCategories = () => {
@@ -188,4 +189,21 @@ exports.selectUsers = () => {
     .then((result) => {
       return result.rows;
     });
+};
+
+exports.deleteComment = (comment_id) => {
+  return checkCommentExists(comment_id).then(() => {
+    return db
+      .query(
+        `
+      DELETE FROM comments 
+      WHERE comment_id = $1
+      RETURNING *;
+      `,
+        [comment_id]
+      )
+      .then((result) => {
+        return result.rows[0];
+      });
+  });
 };

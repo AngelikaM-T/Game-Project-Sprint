@@ -8,6 +8,7 @@ const {
   postReviewsByReviewId,
   patchReview,
   getUsers,
+  deleteCommentById,
 } = require("./controllers/game.controller");
 
 app.use(express.json());
@@ -18,9 +19,9 @@ app.get("/api/reviews/:review_id", getReviewsByReviewId);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.get("/api/users", getUsers);
 
-
 app.post("/api/reviews/:review_id/comments", postReviewsByReviewId);
 app.patch("/api/reviews/:review_id", patchReview);
+app.delete(`/api/comments/:comment_id`, deleteCommentById);
 
 //custom errors
 app.use((err, req, res, next) => {

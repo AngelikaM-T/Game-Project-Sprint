@@ -541,3 +541,27 @@ describe("GET - /api/reviews", () => {
     });
   });
 });
+
+describe("DELETE - 204: /api/comments/:comment_id", () => {
+  test("should delete the given comment by comment id and responds with a status 204 and no content", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+  describe("-error tests", () => {
+    test("GET - 404: responds with an error message when passed an invalid comment_id", () => {
+      return request(app)
+        .delete(`/api/comments/999`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment id 999 not found!");
+        });
+    });
+    test("GET - 400: responds with an error message, when passed an invalid request", () => {
+      return request(app)
+        .get("/api/comments/nonsense")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found!");
+        });
+    });
+  });
+});
