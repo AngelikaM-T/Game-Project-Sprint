@@ -410,7 +410,7 @@ describe("GET - 200: /api/reviews/:review_id", () => {
   });
 });
 
-describe.only("GET - /api/reviews", () => {
+describe("GET - /api/reviews", () => {
   test("GET - 200: responds with an array of review objects sorted by date DESC", () => {
     return request(app)
       .get("/api/reviews")

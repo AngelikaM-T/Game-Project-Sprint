@@ -39,11 +39,9 @@ exports.checkUsernameExists = (username) => {
 };
 
 exports.checkCategoryExists = (category) => {
-  console.log(category)
   if (category === undefined) {
-    return Promise.resolve("potato")
+    return Promise.resolve();
   }
-  console.log("BYEEE")
   return db
     .query(
       `

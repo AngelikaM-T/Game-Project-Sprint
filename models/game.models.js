@@ -36,8 +36,7 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
     return Promise.reject({ status: 400, msg: "invalid order query" });
   }
 
-  return checkCategoryExists(category).then((testVariable) => {
-    console.log(testVariable)
+  return checkCategoryExists(category).then(() => {
     const categoryValues = [];
     let queryStr = `SELECT 
                 reviews.owner,
