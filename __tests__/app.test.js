@@ -542,7 +542,7 @@ describe("GET - /api/reviews", () => {
   });
 });
 
-describe.only("DELETE - 204: /api/comments/:comment_id", () => {
+describe("DELETE - 204: /api/comments/:comment_id", () => {
   test("should delete the given comment by comment id and responds with a status 204 and no content", () => {
     return request(app).delete("/api/comments/2").expect(204);
   });
