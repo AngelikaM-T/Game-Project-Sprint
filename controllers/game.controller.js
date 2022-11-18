@@ -18,9 +18,11 @@ exports.getReviews = (req, res, next) => {
   const { sort_by, order, category } = req.query;
   selectReviews(sort_by, order, category)
     .then((reviews) => {
-      res.send(reviews);
+      res.status(200).send(reviews);
     })
-    .catch(next);
+    .catch((err) => {
+      next(err)
+    });
 };
 
 exports.getReviewsByReviewId = (req, res, next) => {

@@ -1,5 +1,9 @@
 const db = require("../db/connection");
-const { checkReviewExists, checkUsernameExists } = require("../db/db");
+const {
+  checkReviewExists,
+  checkUsernameExists,
+  checkCategoryExists,
+} = require("../db/db");
 
 exports.selectCategories = () => {
   return db
@@ -15,7 +19,14 @@ exports.selectCategories = () => {
 };
 
 exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
-  const validSortQueries = ["created_at", "votes", "title", "owner", "designer", "comment_count"];
+  const validSortQueries = [
+    "created_at",
+    "votes",
+    "title",
+    "owner",
+    "designer",
+    "comment_count",
+  ];
   const validOrderQueries = ["ASC", "DESC"];
 
   if (!validSortQueries.includes(sort_by)) {
@@ -25,33 +36,35 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
     return Promise.reject({ status: 400, msg: "invalid order query" });
   }
 
-  const categoryValues = [];
-  let queryStr = 
-      `SELECT 
-        reviews.owner,
-        reviews.title,
-        reviews.review_id,
-        reviews.category,
-        reviews.review_img_url,
-        reviews.created_at,
-        reviews.votes,
-        reviews.designer,
-        COUNT(comments.review_id) AS comment_count
-        FROM reviews
-        LEFT JOIN comments
-        ON reviews.review_id = comments.review_id`
+  return checkCategoryExists(category).then((testVariable) => {
+    console.log(testVariable)
+    const categoryValues = [];
+    let queryStr = `SELECT 
+                reviews.owner,
+                reviews.title,
+                reviews.review_id,
+                reviews.category,
+                reviews.review_img_url,
+                reviews.created_at,
+                reviews.votes,
+                reviews.designer,
+                COUNT(comments.review_id) AS comment_count
+                FROM reviews
+                LEFT JOIN comments
+                ON reviews.review_id = comments.review_id`;
 
-  if (category) {
-    queryStr += ` WHERE category = $1`;
-    categoryValues.push(category);
-  }
+    if (category) {
+      queryStr += ` WHERE reviews.category = $1`;
+      categoryValues.push(category);
+    }
 
-  queryStr += ` GROUP BY reviews.review_id`;
+    queryStr += ` GROUP BY reviews.review_id`;
 
-  queryStr += ` ORDER BY ${sort_by} ${order}`
+    queryStr += ` ORDER BY ${sort_by} ${order}`;
 
-  return db.query(queryStr, categoryValues).then((result) => {
-    return result.rows
+    return db.query(queryStr, categoryValues).then((result) => {
+      return result.rows;
+    });
   });
 };
 
