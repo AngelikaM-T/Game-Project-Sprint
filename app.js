@@ -12,6 +12,10 @@ const {
   deleteCommentById,
 } = require("./controllers/game.controller");
 
+const cors = require('cors');
+
+app.use(cors());
+
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {
